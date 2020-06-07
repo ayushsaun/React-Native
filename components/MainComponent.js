@@ -1,33 +1,37 @@
 import React , { Component } from 'react'
 import Menu from './MenuComponent'
-import { DISHES } from '../shared/dishes'
 import Dishdetail from './DishdetailComponent'
-import { View } from 'react-native'
+import { View, Platform } from 'react-native';
+import { createStackNavigator } from 'react-navigation';
+
+const MenuNavigator = createStackNavigator({
+        Menu: { screen: Menu },
+        Dishdetail: { screen: Dishdetail }
+    },
+    {
+        initialRouteName: 'Menu',
+        navigationOptions: {
+            headerStyle: {
+                backgroundColor: "#512DA8"
+            },
+            headerTintColor: '#fff',
+            headerTitleStyle: {
+                color: "#fff"            
+            }
+        }
+    }
+); 
+// when navigationOptions is applied here it is applicable to all screens
+// mentioned above so if we have common config for screens we can specify them init there
 
 class Main extends Component {
     
-    constructor(props) {
-        super(props)
-
-        this.state = {
-            dishes : DISHES,
-            selectedDish: null
-        }
-    }
-
-    onDishSelect(dishId) {
-        this.setState({
-            selectedDish: dishId
-        })
-    }
-    
     render() {
         return (
-            <View style = {{flex: 1}}>
-                <Menu dishes = {this.state.dishes} 
-                    onPress = {(dishId) => this.onDishSelect(dishId)} // this received id value from Menu and is now setting selecteddish value
-                />
-                <Dishdetail dish = {this.state.dishes.filter((dish) => dish.id === this.state.selectedDish)[0]} />
+            // by using Expo.Constants.statusBarHeight we will get enough space on the top for status bar to be displayed
+            // Expo.Constants.statusBarHeight will show error on web after compilation so just observe that on mobile app instead
+            <View style={{flex:1, paddingTop: Platform.OS === 'ios' ? 0 : Expo.Constants.statusBarHeight }}>
+                <MenuNavigator />
             </View>
         )
     }
