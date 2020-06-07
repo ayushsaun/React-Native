@@ -11,6 +11,7 @@ function Menu(props) {
                 title = {item.name}
                 subtitle = {item.description}
                 hideChevron = {true}
+                onPress = {() => props.onPress(item.id)} // this will send id of dish we selected to maincomponent
                 leftAvatar = {{ source: require('./images/uthappizza.png')}}
             />
         )
