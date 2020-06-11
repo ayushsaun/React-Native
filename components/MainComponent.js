@@ -7,6 +7,24 @@ import Dishdetail from './DishdetailComponent'
 import { View , Platform , Image , StyleSheet , ScrollView , Text } from 'react-native';
 import { createStackNavigator , createDrawerNavigator , DrawerItems , SafeAreaView } from 'react-navigation';
 import { Icon } from 'react-native-elements'
+import { connect } from 'react-redux'
+import { fetchComments , fetchDishes , fetchLeaders , fetchPromos } from '../redux/ActionCreators'
+
+const mapStateToProps = state => {
+    return {
+      dishes: state.dishes,
+      comments: state.comments,
+      promotions: state.promotions,
+      leaders: state.leaders
+    }
+}
+
+const mapDispatchToProps = dispatch => ({
+    fetchDishes: () => dispatch(fetchDishes()),
+    fetchComments: () => dispatch(fetchComments()),
+    fetchPromos: () => dispatch(fetchPromos()),
+    fetchLeaders: () => dispatch(fetchLeaders()),
+})
 
 const MenuNavigator = createStackNavigator({
         Menu: { screen: Menu,
@@ -173,6 +191,17 @@ const MainNavigator = createDrawerNavigator({
 )
 
 class Main extends Component {
+
+    // So what does means is that when the main component mounts, then at that time when it is mounted,
+    // I will issue the dispatch for all these four. Each of these, when you see the action creator,
+    // Corresponding to this. Each of them will issue a fetch to the server using the fetch,
+    // to obtain the data from our JSON server.
+    componentDidMount() {
+        this.props.fetchDishes();
+        this.props.fetchComments();
+        this.props.fetchLeaders();
+        this.props.fetchPromos();
+    }
     
     render() {
         return (
@@ -209,4 +238,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default Main;
+export default connect( mapDispatchToProps , mapDispatchToProps )(Main);
