@@ -4,6 +4,7 @@ import Menu from './MenuComponent'
 import About from './AboutComponent'
 import Contact from './ContactComponent'
 import Dishdetail from './DishdetailComponent'
+import Reservation from './ReservationComponent'
 import { View , Platform , Image , StyleSheet , ScrollView , Text } from 'react-native';
 import { createStackNavigator , createDrawerNavigator , DrawerItems , SafeAreaView } from 'react-navigation';
 import { Icon } from 'react-native-elements'
@@ -103,6 +104,24 @@ const ContactNavigator = createStackNavigator({
     }
 );
 
+const ReservationNavigator = createStackNavigator({
+    Reservation: { screen: Reservation }
+},
+{
+    navigationOptions: ({ navigation }) => ({
+        headerStyle: {
+            backgroundColor: "#512DA8"
+        },
+        headerTintColor: '#fff',
+        headerTitleStyle: {
+            color: "#fff"            
+        },
+        headerLeft: <Icon name='menu' size={24} color = 'white'
+            onPress = {() => navigation.toggleDrawer()} />
+    })
+}
+);
+
 // The SafeAreaView is specifically for the iPhone X,
 // that defines a part of the area as a safe area where nothing else will be laid out. 
 // <View style={styles.drawerHeader}> is is the design or logo which we we will observe above the menu in drawer
@@ -127,6 +146,7 @@ const CustomDrawerContentComponent = (props) => (
 )
 
 const MainNavigator = createDrawerNavigator({
+        
         Home: {
             screen: HomeNavigator,
             navigationOptions: {
@@ -141,6 +161,7 @@ const MainNavigator = createDrawerNavigator({
                 )
             }
         },
+        
         About: {
             screen: AboutNavigator,
             navigationOptions: {
@@ -155,6 +176,7 @@ const MainNavigator = createDrawerNavigator({
                 )
             }
         },
+        
         Menu: {
             screen: MenuNavigator,
             navigationOptions: {
@@ -169,6 +191,7 @@ const MainNavigator = createDrawerNavigator({
                 )
             }
         },
+        
         Contact: {
             screen: ContactNavigator,
             navigationOptions: {
@@ -178,6 +201,21 @@ const MainNavigator = createDrawerNavigator({
                     <Icon name="address-card"
                         type='font-awesome'
                         size = {22}
+                        color = {tintColor}
+                    />
+                )
+            }
+        },
+
+        Reservation: {
+            screen: ReservationNavigator,
+            navigationOptions: {
+                title: 'Reserve Table',
+                drawerLabel: 'Reserve Table',
+                drawerIcon: ({ tintColor }) => (
+                    <Icon name="cutlery"
+                        type='font-awesome'
+                        size = {24}
                         color = {tintColor}
                     />
                 )
