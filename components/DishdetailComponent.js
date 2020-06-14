@@ -4,6 +4,7 @@ import { Card , Icon , Rating , Input } from 'react-native-elements'
 import { connect } from 'react-redux'
 import {baseUrl} from '../shared/baseUrl'
 import { postFavorite , addComment, postComment } from '../redux/ActionCreators';
+import * as Animatable from 'react-native-animatable'
 
 const mapStateToProps = state => {
     return {
@@ -28,33 +29,35 @@ function RenderDish(props) {
         return (
             // Now, In Icon if I use the prop or attribute as raised for the Icon,
             // what this does is it displays the Icon in the form of a button, a rounded button.
-            <Card
-                featuredTitle = {dish.name}
-                image = {{ uri: baseUrl + dish.image }}
-            >
-                <Text style={{margin: 10}}>
-                    {dish.description}
-                </Text>
-                <View style = {styles.fontRow}>
-                    <Icon 
-                        style = {{ flex: 1 }}
-                        raised
-                        reverse
-                        name={props.favorite ? 'heart' : 'heart-o'}
-                        type="font-awesome"
-                        color='#f50'
-                        onPress={() => props.favorite ? console.log('Already favorite') : props.onPress() } />
-                    <Icon 
-                        style = {{ flex: 1 }}
-                        raised
-                        reverse
-                        name= 'pencil'
-                        type="font-awesome"
-                        color='#9400D3'
-                        onPress = {() => { props.toggleModal() }} 
-                            />
-                </View> 
-            </Card>
+            <Animatable.View animation="fadeInDown" duration={2000} delay={1000} >
+                <Card
+                    featuredTitle = {dish.name}
+                    image = {{ uri: baseUrl + dish.image }}
+                >
+                    <Text style={{margin: 10}}>
+                        {dish.description}
+                    </Text>
+                    <View style = {styles.fontRow}>
+                        <Icon 
+                            style = {{ flex: 1 }}
+                            raised
+                            reverse
+                            name={props.favorite ? 'heart' : 'heart-o'}
+                            type="font-awesome"
+                            color='#f50'
+                            onPress={() => props.favorite ? console.log('Already favorite') : props.onPress() } />
+                        <Icon 
+                            style = {{ flex: 1 }}
+                            raised
+                            reverse
+                            name= 'pencil'
+                            type="font-awesome"
+                            color='#9400D3'
+                            onPress = {() => { props.toggleModal() }} 
+                                />
+                    </View> 
+                </Card>
+            </Animatable.View>
             // So here, when I press that, I'm going to check to see if this is already my favorite dish,
             // if it is already my favorite dish, I will simply say 'Already favorite'.
             // Otherwise, I'm going to call props.onPress() and then we will close off the icon here.
@@ -90,13 +93,15 @@ function RenderComments(props) {
     }
 
     return (
-        <Card title="Comments">
-            <FlatList
-                data = {comments}
-                renderItem = {renderCommentItem}
-                keyExtractor = {item => item.id.toString()}
-            />
-        </Card> 
+        <Animatable.View animation="fadeInUp" duration={2000} delay={1000} >
+            <Card title="Comments">
+                <FlatList
+                    data = {comments}
+                    renderItem = {renderCommentItem}
+                    keyExtractor = {item => item.id.toString()}
+                />
+            </Card>
+        </Animatable.View> 
     )
 }
 
