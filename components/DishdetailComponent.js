@@ -51,7 +51,7 @@ function RenderDish(props) {
                         name= 'pencil'
                         type="font-awesome"
                         color='#9400D3'
-                        onPress = {props.onPress} 
+                        onPress = {() => { props.toggleModal() }} 
                             />
                 </View> 
             </Card>
@@ -151,7 +151,7 @@ class Dishdetail extends Component {
             <ScrollView>
                 <RenderDish dish= {this.props.dishes.dishes[+dishId]} 
                     favorite={this.props.favorites.some(el => el === dishId)}
-                    onPress = {() => { this.markFavorite(dishId); this.toggleModal() } }
+                    onPress={()=>this.markFavorite(dishId)} toggleModal={()=>this.toggleModal()}
                 />
                 <Modal
                     animationType = {'slide'}
