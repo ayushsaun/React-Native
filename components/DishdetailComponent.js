@@ -1,5 +1,5 @@
 import React , { Component } from 'react'
-import { View , Text , ScrollView , FlatList , StyleSheet , Button , Modal } from 'react-native'
+import { View , Text , ScrollView , FlatList , StyleSheet , Button , Modal , Alert , PanResponder } from 'react-native'
 import { Card , Icon , Rating , Input } from 'react-native-elements'
 import { connect } from 'react-redux'
 import {baseUrl} from '../shared/baseUrl'
@@ -25,11 +25,78 @@ const mapDispatchToProps = dispatch => ({
 function RenderDish(props) {
     const dish = props.dish;
 
+    var viewRef
+    const handleViewRef = ref => viewRef = ref;
+
+    // this will receive parameter and then recognize that the user has performed
+    // a drag gesture a right to left swipe gesture
+    const recognizeDrag = ({ moveX , moveY , dx , dy }) => {
+        // If the dx value is less than minus 200 meaning that it has accumulated a distance
+        // of 200 but in the right to left direction, so in the negative direction.
+        // So, the way the distances are measured is the coordinates
+        // always are measured with 00 at the top-left corner. 
+        // this is a simple way to recognize right to left gesture
+        if ( dx < -150 ) {
+            return true
+        }
+        else {
+            return false
+        }
+    }
+
+    // By creating panResponder in PanResponder.create within which
+    // we will supply various callbacks for the panResponder
+    const panResponder = PanResponder.create({
+        // onStartShouldSetPanResponder is called at the time when user gesture begins on screen
+        // this callback gets interaction event and gestureState
+        // the gesture state contains information that we can used to recognize various aspects 
+        // about the actual pan gestures that the user does on the screen 
+        onStartShouldSetPanResponder: (e, gestureState) => {
+            return true
+        },
+
+        onPanResponderGrant: () => {
+            viewRef.rubberBand(1000)
+                // endstate will tell at end of animation what is state here 
+                .then(endState => console.log(endState.finished ? 'Finished' : 'Cancelled'))
+        },
+        // this one will be invoked when the user lifts the
+        // finger off the screen after performing gesture
+        // here we need to check if gesture is done and if it is done then what type of gesture it is
+        onPanResponderEnd: (e, gestureState) => {
+            // this is passing the gesture info to the above mentioned function
+            if (recognizeDrag(gestureState))
+                Alert.alert(
+                    'Add to Favorites?',
+                    'Are you sure you wish to add '+dish.name+' to you Favorites?',
+                    [
+                        {
+                            text: 'Cancel',
+                            onPress: () => console.log('Cancel Pressed'),
+                            style: 'cancel'
+                        },
+                        {
+                            text: 'Ok',
+                            onPress: () => props.favorite ? console.log('Already favorite') : props.onPress()
+                        }
+                    ],
+                    { cancelable: false }
+                )
+            return true
+        },
+    })
+
     if(dish != null) {
         return (
             // Now, In Icon if I use the prop or attribute as raised for the Icon,
             // what this does is it displays the Icon in the form of a button, a rounded button.
-            <Animatable.View animation="fadeInDown" duration={2000} delay={1000} >
+            <Animatable.View 
+                animation="fadeInDown" 
+                duration={2000} 
+                delay={1000} 
+                ref={handleViewRef}
+                { ...panResponder.panHandlers }    
+            >
                 <Card
                     featuredTitle = {dish.name}
                     image = {{ uri: baseUrl + dish.image }}
