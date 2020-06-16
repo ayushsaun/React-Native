@@ -37,7 +37,10 @@ function RenderDish(props) {
         // always are measured with 00 at the top-left corner. 
         // this is a simple way to recognize right to left gesture
         if ( dx < -150 ) {
-            return true
+            return 1
+        }
+        else if (dx > 150) {
+            return 2
         }
         else {
             return false
@@ -65,7 +68,7 @@ function RenderDish(props) {
         // here we need to check if gesture is done and if it is done then what type of gesture it is
         onPanResponderEnd: (e, gestureState) => {
             // this is passing the gesture info to the above mentioned function
-            if (recognizeDrag(gestureState))
+            if (recognizeDrag(gestureState) == 1)
                 Alert.alert(
                     'Add to Favorites?',
                     'Are you sure you wish to add '+dish.name+' to you Favorites?',
@@ -82,6 +85,8 @@ function RenderDish(props) {
                     ],
                     { cancelable: false }
                 )
+            else if (recognizeDrag(gestureState) == 2)
+                props.toggleModal()
             return true
         },
     })
@@ -281,9 +286,11 @@ class Dishdetail extends Component {
                                 raised
                                 title='Submit'
                             />
+                            <Text></Text>
                             <Button
                             onPress={() => { this.toggleModal(); } }
                             title='Cancel'
+                            color = '#808080'
                             />
                         </View>
                 </Modal>
