@@ -1,5 +1,5 @@
 import React , { Component } from 'react'
-import { View , Text , ScrollView , FlatList , StyleSheet , Button , Modal , Alert , PanResponder } from 'react-native'
+import { View , Text , ScrollView , FlatList , StyleSheet , Button , Modal , Alert , PanResponder , Share } from 'react-native'
 import { Card , Icon , Rating , Input } from 'react-native-elements'
 import { connect } from 'react-redux'
 import {baseUrl} from '../shared/baseUrl'
@@ -91,6 +91,16 @@ function RenderDish(props) {
         },
     })
 
+    const shareDish = (title , message , url) => {
+        Share.share({
+            title: title,
+            message: title + ': ' + message + ' ' + url,
+            url: url
+        }, {
+            dialogTitle: 'Share ' + title
+        })
+    }
+
     if(dish != null) {
         return (
             // Now, In Icon if I use the prop or attribute as raised for the Icon,
@@ -127,6 +137,14 @@ function RenderDish(props) {
                             color='#9400D3'
                             onPress = {() => { props.toggleModal() }} 
                                 />
+                        <Icon 
+                            raised
+                            reverse
+                            name= 'share'
+                            type="font-awesome"
+                            color='#51D2A8'
+                            onPress = {() => shareDish(dish.name , dish.description , baseUrl + dish.image) } 
+                        />
                     </View> 
                 </Card>
             </Animatable.View>
