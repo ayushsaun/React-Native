@@ -5,6 +5,7 @@ import DatePicker from 'react-native-datepicker'
 import * as Animatable from 'react-native-animatable'
 import { Notifications } from 'expo';
 import * as Permissions from 'expo-permissions';
+import * as Calendar from 'expo-calendar';
 
 class Reservation extends Component {
 
@@ -22,6 +23,7 @@ class Reservation extends Component {
         title: 'Reserve Table'
     }
 
+    
     toggleModal() {
         this.setState({
             showModal: !this.state.showModal
@@ -47,23 +49,14 @@ class Reservation extends Component {
 
     // this function basically ecapsulates the obtaining of the permission for putting the notifications
     async obtainNotificationPermission() {
-        let permission = await Permissions.getAsync(Permissions.USER_FACING_NOTIFICATIONS)
-        if (permission.status !== "granted") {
-            permission = await Permissions.getAsync(Permissions.USER_FACING_NOTIFICATIONS)
-            if (permission.status !== "granted") {
-                Alert.alert ('Permission not granted to show notifications');
+        let permission = await Permissions.getAsync(Permissions.CALENDAR);
+        if (permission.status !== 'granted') {
+            permission = await Permissions.askAsync(Permissions.CALENDAR);
+            if (permission.status !== 'granted') {
+                Alert.alert('Permission not granted to show calendar');
             }
         }
-        else {
-            if (Platform.OS == 'android') {
-                Notifications.createChannelAndroidAsync( 'notify' ,{
-                    name: 'notify',
-                    sound: true,
-                    vibrate: true,
-                })
-            }
-        }
-        return permission
+        return permission;
     }
 
     // this is the date we used for reservation using reservation form
@@ -82,6 +75,35 @@ class Reservation extends Component {
             }
         })
     }
+
+    async obtainCalendarPermission(){
+        let permission = await Permissions.getAsync(Permissions.CALENDAR);
+        
+        if(permission.status !== 'granted'){
+            permission = await Permissions.askAsync(Permissions.CALENDAR);
+            
+            if(permission.status !== 'granted'){
+                Alert.alert('Permission not granted to access calendar');
+            }
+        }
+        return permission;
+    }
+    
+    async addReservationToCalendar(date){
+        await this.obtainCalendarPermission();
+
+        console.log(new Date(Date.parse(date)) + 2*60*60*1000);
+        
+        Calendar.createEventAsync(Calendar.DEFAULT, {
+            title: "Con Fusion Table Reservation",
+            color: '#512DA8',
+            name: 'Your Reservation',
+            startDate: new Date(Date.parse(date)),
+            endDate: new Date(Date.parse(date)+2*60*60*1000),
+            timeZone: 'Asia/Hong_Kong',
+            location: '121, Clear Water Bay Road, Kowloon, Hong Kong'
+        });
+    } 
 
     render() {
 
@@ -157,14 +179,15 @@ class Reservation extends Component {
                                          {
                                              text: 'OK',
                                              onPress: () => { 
+                                                this.addReservationToCalendar(this.state.date);
                                                 this.presentLocalNotification(this.state.date)
                                                 this.resetForm() 
-                                            }                                         }
-         
+                                            }                                         
+                                        }
                                      ],
                                      {cancelable: false}
                                      // this means user need to select out of cancel or ok otherwise they cannot cancel the alert
-                                )                       
+                                )                      
                              }}
                             accessibilityLabel = 'Learn more about this purple button'
                         />
